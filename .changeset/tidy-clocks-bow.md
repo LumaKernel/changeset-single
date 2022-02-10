@@ -2,4 +2,12 @@
 "@luma-sandbox/single": patch
 ---
 
-foo
+## Features
+
+- feat1
+- feat2
+
+## Bug Fixes
+
+- fix1
+- fix2
