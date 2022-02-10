@@ -1,0 +1,84 @@
+name: Test Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - ".github/workflows/release-pr.yml"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - ".github/workflows/release-pr.yml"
+
+jobs:
+  cache-pnpm:
+    name: Cache Pnpm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --prefer-offline]
+  test-build-publish:
+    name: Test Build and Publish
+    needs: cache-pnpm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --prefer-offline]
+      - name: Build
+        run: "echo TODO: building..."
+      - name: Lint
+        run: "echo TODO: linting..."
+      - name: Run tests
+        run: "echo TODO: linting..."
+      - if: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/main' }}
+        name: Configure npm token
+        run: pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+      - name: Publish Dry Run
+        run: pnpm -r publish --dry-run
+      - if: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/main' }}
+        name: Publish if needed
+        run: pnpm -r publish --access public
+      - uses: LumaKernel/npm-release-pack-action@main
+        with:
+          github_token: ${{ github.token }}
+          # repository: ''  # optional
+          # working_directory: '.'  # optional
+          publish_command: 'pnpm publish --access public'
+          #  publish_command: 'npm publish --access public'
+          #  publish_command: 'yarn publish --access public'
+          #  publish_command: 'pnpm publish --access public'
+          # version_tag_pattern: 'v%s'  # optional
+          # release_name_pattern: 'v%s'  # optional
+          # release_body:  # optional
+          # draft:  # optional, boolean
+          # prerelease:  # optional, boolean
+          # generate_release_notes:  # optional, boolean
+          # discussion_category_name:  # optional, boolean
