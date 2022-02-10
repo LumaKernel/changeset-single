@@ -1,5 +1,11 @@
 # @luma-sandbox/single
 
+## 0.2.2
+
+### Patch Changes
+
+- cd2cefe: foo
+
 ## 0.2.1
 
 ### Patch Changes
