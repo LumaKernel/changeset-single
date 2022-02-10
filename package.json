@@ -13,5 +13,8 @@
     "luma_sand_single": "./bin/luma_sand_single.js"
   },
   "license": "MIT",
-  "author": "Luma <world@luma.email>"
+  "author": "Luma <world@luma.email>",
+  "devDependencies": {
+    "@changesets/cli": "^2.20.0"
+  }
 }
